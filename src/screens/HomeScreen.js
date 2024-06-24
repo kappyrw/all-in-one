@@ -11,17 +11,18 @@ import la5 from "../../assets/images/la5.jpeg";
 import la6 from "../../assets/images/la6.jpeg";
 
 const initialServices = [
-  { id: '1', name: 'Moving Service 1', image: la1, size: 'Large', price: '$50' },
-  { id: '2', name: 'Moving Service 2', image: la2, size: 'Medium', price: '$40' },
-  { id: '3', name: 'Moving Service 3', image: la3, size: 'Small', price: '$30' },
-  { id: '4', name: 'Moving Service 4', image: la4, size: 'Extra Large', price: '$60' },
-  { id: '5', name: 'Moving Service 5', image: la5, size: 'Large', price: '$50' },
-  { id: '6', name: 'Moving Service 6', image: la6, size: 'Medium', price: '$40' },
+  { id: '1', name: 'Product 1', image: la1, size: 'Large', price: '$50' },
+  { id: '2', name: 'Product 2', image: la2, size: 'Medium', price: '$40' },
+  { id: '3', name: 'Product 3', image: la3, size: 'Small', price: '$30' },
+  { id: '4', name: 'Product 4', image: la4, size: 'Extra Large', price: '$60' },
+  { id: '5', name: 'Product 5', image: la5, size: 'Large', price: '$50' },
+  { id: '6', name: 'Product 6', image: la6, size: 'Medium', price: '$40' },
 ];
 
 const HomeScreen = ({ navigation }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedService, setSelectedService] = useState(null);
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
@@ -32,6 +33,14 @@ const HomeScreen = ({ navigation }) => {
 
     return () => clearInterval(interval);
   }, [currentIndex]);
+
+  useEffect(() => {
+    const timerID = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString());
+    }, 1000);
+
+    return () => clearInterval(timerID);
+  }, []);
 
   const handleServicePress = (service) => {
     setSelectedService(service);
@@ -48,6 +57,9 @@ const HomeScreen = ({ navigation }) => {
         <Text style={styles.description}>
           Order any product you want from our wide range of services. Make your choice below:
         </Text>
+        <View style={styles.timeContainer}>
+          <Text style={styles.timeText}>Current Time: {currentTime}</Text>
+        </View>
         <ScrollView
           ref={scrollViewRef}
           horizontal
@@ -108,6 +120,14 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
     marginBottom: 20,
+  },
+  timeContainer: {
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  timeText: {
+    fontSize: 16,
+    color: "#fff",
   },
   scrollViewContent: {
     alignItems: "center",
