@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
-import { StyleSheet, View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, Image, TouchableOpacity, Animated, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Import product images
+// Import product images (assuming they're still needed)
 import la1 from "../../assets/images/la1.jpeg";
 import la2 from "../../assets/images/la2.jpeg";
 import la3 from "../../assets/images/la3.jpeg";
@@ -10,29 +10,21 @@ import la4 from "../../assets/images/la4.jpeg";
 import la5 from "../../assets/images/la5.jpeg";
 import la6 from "../../assets/images/la6.jpeg";
 
+const { width } = Dimensions.get('window');
+
 const initialServices = [
-  { id: '1', name: 'Product 1', image: la1, size: 'Large', price: '$50' },
-  { id: '2', name: 'Product 2', image: la2, size: 'Medium', price: '$40' },
-  { id: '3', name: 'Product 3', image: la3, size: 'Small', price: '$30' },
-  { id: '4', name: 'Product 4', image: la4, size: 'Extra Large', price: '$60' },
-  { id: '5', name: 'Product 5', image: la5, size: 'Large', price: '$50' },
-  { id: '6', name: 'Product 6', image: la6, size: 'Medium', price: '$40' },
+  { id: '1', name: 'Luxury Spa', image: la1, category: 'Wellness', price: '$150', description: 'Indulge in our luxurious spa treatments for ultimate relaxation.' },
+  { id: '2', name: 'Gourmet Dinner', image: la2, category: 'Dining', price: '$200', description: 'Experience fine dining with our chef\'s special gourmet menu.' },
+  { id: '3', name: 'Adventure Trek', image: la3, category: 'Adventure', price: '$100', description: 'Embark on an exciting trek through scenic landscapes.' },
+  { id: '4', name: 'Art Workshop', image: la4, category: 'Culture', price: '$80', description: 'Unleash your creativity in our interactive art workshops.' },
+  { id: '5', name: 'Yacht Cruise', image: la5, category: 'Leisure', price: '$300', description: 'Enjoy a luxurious yacht cruise along the beautiful coastline.' },
+  { id: '6', name: 'Wine Tasting', image: la6, category: 'Experience', price: '$120', description: 'Savor exquisite wines in our guided tasting sessions.' },
 ];
 
 const HomeScreen = ({ navigation }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedService, setSelectedService] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
-  const scrollViewRef = useRef(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex(prevIndex => (prevIndex + 1) % initialServices.length);
-      scrollViewRef.current.scrollTo({ x: currentIndex * 300, animated: true });
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex]);
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const [selectedService, setSelectedService] = useState(null);
 
   useEffect(() => {
     const timerID = setInterval(() => {
@@ -42,56 +34,78 @@ const HomeScreen = ({ navigation }) => {
     return () => clearInterval(timerID);
   }, []);
 
-  const handleServicePress = (service) => {
-    setSelectedService(service);
-  };
+  const renderService = ({ item, index }) => {
+    const inputRange = [
+      (index - 1) * width,
+      index * width,
+      (index + 1) * width
+    ];
 
-  const handleOrderPress = (service) => {
-    navigation.navigate("WelcomeScreen", { productName: service.name }); // Navigate to WelcomeScreen and pass service name
+    const scale = scrollX.interpolate({
+      inputRange,
+      outputRange: [0.8, 1, 0.8],
+      extrapolate: 'clamp'
+    });
+
+    return (
+      <TouchableOpacity onPress={() => setSelectedService(item)}>
+        <Animated.View style={[styles.serviceCard, { transform: [{ scale }] }]}>
+          <Image source={item.image} style={styles.serviceImage} />
+          <View style={styles.serviceInfo}>
+            <Text style={styles.serviceName}>{item.name}</Text>
+            <Text style={styles.serviceCategory}>{item.category}</Text>
+            <Text style={styles.servicePrice}>{item.price}</Text>
+          </View>
+        </Animated.View>
+      </TouchableOpacity>
+    );
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Welcome to MultiService!</Text>
-        <Text style={styles.description}>
-          Order any product you want from our wide range of services. Make your choice below:
-        </Text>
-        <View style={styles.timeContainer}>
-          <Text style={styles.timeText}>Current Time: {currentTime}</Text>
-        </View>
-        <ScrollView
-          ref={scrollViewRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.scrollViewContent}
-        >
-          {initialServices.map((service, index) => (
-            <View key={service.id} style={styles.serviceCardContainer}>
-              <TouchableOpacity
-                style={styles.orderButton}
-                onPress={() => handleOrderPress(service)}
-              >
-                <Text style={styles.orderButtonText}>Order</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.serviceCard}
-                onPress={() => handleServicePress(service)}
-              >
-                <Image source={service.image} style={styles.serviceImage} />
-                <Text style={styles.serviceName}>{service.name}</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
-        {selectedService && (
-          <View style={styles.selectedServiceInfo}>
-            <Text style={styles.infoText}>Name: {selectedService.name}</Text>
-            <Text style={styles.infoText}>Size: {selectedService.size}</Text>
-            <Text style={styles.infoText}>Price: {selectedService.price}</Text>
-          </View>
+      <View style={styles.header}>
+        <Text style={styles.title}>MultiService</Text>
+        <Text style={styles.timeText}>{currentTime}</Text>
+      </View>
+
+      <Text style={styles.subtitle}>Discover Extraordinary Experiences</Text>
+
+      <Animated.FlatList
+        data={initialServices}
+        renderItem={renderService}
+        keyExtractor={(item) => item.id}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: true }
         )}
+      />
+
+      {selectedService && (
+        <View style={styles.detailsContainer}>
+          <Text style={styles.detailsTitle}>{selectedService.name}</Text>
+          <Text style={styles.detailsDescription}>{selectedService.description}</Text>
+          <TouchableOpacity 
+            style={styles.orderButton}
+            onPress={() => navigation.navigate("WelcomeScreen", { productName: selectedService.name })}
+          >
+            <Text style={styles.orderButtonText}>Order</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.footerButton}>
+          <Text style={styles.footerButtonText}>Explore</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.footerButton}>
+          <Text style={styles.footerButtonText}>Favorites</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.footerButton}>
+          <Text style={styles.footerButtonText}>Profile</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -100,91 +114,103 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#005555",
+    backgroundColor: '#1a2a6c',
   },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 20,
   },
   title: {
     fontSize: 28,
-    color: "#fff",
-    fontWeight: "bold",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  description: {
-    fontSize: 16,
-    color: "#fff",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  timeContainer: {
-    alignItems: "center",
-    marginBottom: 10,
+    color: '#fff',
+    fontWeight: 'bold',
   },
   timeText: {
     fontSize: 16,
-    color: "#fff",
+    color: '#fff',
   },
-  scrollViewContent: {
-    alignItems: "center",
-  },
-  serviceCardContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+  subtitle: {
+    fontSize: 18,
+    color: '#fff',
+    textAlign: 'center',
     marginBottom: 20,
   },
-  orderButton: {
-    backgroundColor: "#F9A826", // Yellow background
-    borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginTop: 10,
-    position: "absolute",
-    zIndex: 1,
-    alignSelf: "center",
-  },
-  orderButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   serviceCard: {
-    width: 300,
-    marginHorizontal: 10,
-    borderRadius: 10,
-    overflow: "hidden",
-    backgroundColor: "#F9A826", // Light orange background
-    justifyContent: "center",
-    alignItems: "center",
+    width: width - 40,
+    height: 300,
+    marginHorizontal: 20,
+    borderRadius: 20,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
   },
   serviceImage: {
-    width: "100%",
-    height: 200,
-    resizeMode: "cover",
-    borderRadius: 10,
+    width: '100%',
+    height: '70%',
+    resizeMode: 'cover',
+  },
+  serviceInfo: {
+    padding: 15,
   },
   serviceName: {
-    fontSize: 18,
-    color: "#fff",
-    fontWeight: "bold",
-    marginTop: 10,
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
   },
-  selectedServiceInfo: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  infoText: {
+  serviceCategory: {
     fontSize: 16,
-    color: "#333",
-    marginBottom: 5,
+    color: '#666',
+    marginVertical: -1,
+  },
+  servicePrice: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1a2a6c',
+  },
+  detailsContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    padding: 20,
+    marginHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  detailsTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#1a2a6c',
+    marginBottom: 10,
+  },
+  detailsDescription: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 15,
+  },
+  orderButton: {
+    backgroundColor: '#1a2a6c',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  orderButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 20,
+  },
+  footerButton: {
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  footerButtonText: {
+    color: '#1a2a6c',
+    fontWeight: 'bold',
   },
 });
 

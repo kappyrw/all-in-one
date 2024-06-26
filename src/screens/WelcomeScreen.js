@@ -1,10 +1,13 @@
-import React from "react";
-import { StyleSheet, View, Text, Image, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Text, Image, TouchableOpacity, Animated, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
 
+const { width } = Dimensions.get('window');
+
 const WelcomeScreen = ({ navigation, route }) => {
   const { productName } = route.params;
+  const [fadeAnim] = useState(new Animated.Value(0));
 
   const images = {
     mine: require("../../assets/images/mine.png"),
@@ -23,33 +26,54 @@ const WelcomeScreen = ({ navigation, route }) => {
     p9: require("../../assets/images/p9.png"),
   };
 
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <Image source={images.mine} style={styles.backgroundImage} />
-      <View style={styles.overlay}>
+      <Animated.View style={[styles.overlay, { opacity: fadeAnim }]}>
         <View style={styles.header}>
-          <Text style={styles.title}>Welcome to {productName}</Text>
-          <Text style={styles.subtitle}>We will send your package or anything to your destination</Text>
+          <Text style={styles.title}>Welcome to</Text>
+          <Text style={styles.productName}>{productName}</Text>
+          <Text style={styles.subtitle}>Order anything, anytime, anywhere</Text>
+        </View>
+        <View style={styles.featuresContainer}>
+          <FeatureItem icon="shoppingcart" text="Wide Selection" />
+          <FeatureItem icon="clockcircle" text="Fast Delivery" />
+          <FeatureItem icon="star" text="Top Quality" />
         </View>
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             onPress={() => navigation.navigate("SignUpScreen")}
-            style={styles.button}
+            style={[styles.button, styles.signUpButton]}
           >
             <Text style={styles.buttonText}>Fungura</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("SignInScreen")}
-            style={styles.buttonAlt}
+            style={[styles.button, styles.signInButton]}
           >
             <Text style={styles.buttonText}>Injira</Text>
           </TouchableOpacity>
         </View>
         <Text style={styles.footerText}>By joining you agree to our Terms of Service and Privacy Policy</Text>
-      </View>
+      </Animated.View>
     </SafeAreaView>
   );
 };
+
+const FeatureItem = ({ icon, text }) => (
+  <View style={styles.featureItem}>
+    <AntDesign name={icon} size={24} color="#F9A826" />
+    <Text style={styles.featureText}>{text}</Text>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -64,7 +88,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 85, 85, 0.8)',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
@@ -75,39 +99,57 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#ffffff",
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "bold",
     textAlign: 'center',
   },
+  productName: {
+    color: "#F9A826",
+    fontSize: 40,
+    fontWeight: "bold",
+    textAlign: 'center',
+    marginVertical: 10,
+  },
   subtitle: {
     color: "#ffffff",
-    fontSize: 16,
+    fontSize: 18,
     textAlign: 'center',
     marginTop: 10,
   },
+  featuresContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginBottom: 40,
+  },
+  featureItem: {
+    alignItems: 'center',
+  },
+  featureText: {
+    color: "#ffffff",
+    marginTop: 5,
+    fontSize: 14,
+  },
   buttonsContainer: {
     width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     marginTop: 20,
   },
   button: {
-    backgroundColor: "#F9A826", // Adjusted color to match the image
-    borderRadius: 10,
+    borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 30,
-    marginHorizontal: 10,
+    marginVertical: 10,
+    width: '100%',
+    alignItems: 'center',
   },
-  buttonAlt: {
-    backgroundColor: "#005555", // Adjusted color to match the image
-    borderRadius: 10,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    marginHorizontal: 10,
+  signUpButton: {
+    backgroundColor: "#F9A826",
+  },
+  signInButton: {
+    backgroundColor: "#ffffff",
   },
   buttonText: {
     fontSize: 18,
-    color: "#fff",
     fontWeight: "700",
   },
   footerText: {
