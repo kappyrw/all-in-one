@@ -98,13 +98,13 @@ const HomeScreen = ({ navigation }) => {
 
       <View style={styles.footer}>
         <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Explore</Text>
+          <Text style={styles.footerButtonText}>Buy</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Favorites</Text>
+          <Text style={styles.footerButtonText}>Rent</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Profile</Text>
+          <Text style={styles.footerButtonText}>Order</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
