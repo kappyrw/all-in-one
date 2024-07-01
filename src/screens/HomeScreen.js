@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState } from "react";
-import { StyleSheet, View, Text, Image, TouchableOpacity, Animated, Dimensions } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Import product images (assuming they're still needed)
@@ -23,7 +23,6 @@ const initialServices = [
 
 const HomeScreen = ({ navigation }) => {
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
-  const scrollX = useRef(new Animated.Value(0)).current;
   const [selectedService, setSelectedService] = useState(null);
 
   useEffect(() => {
@@ -34,29 +33,15 @@ const HomeScreen = ({ navigation }) => {
     return () => clearInterval(timerID);
   }, []);
 
-  const renderService = ({ item, index }) => {
-    const inputRange = [
-      (index - 1) * width,
-      index * width,
-      (index + 1) * width
-    ];
-
-    const scale = scrollX.interpolate({
-      inputRange,
-      outputRange: [0.8, 1, 0.8],
-      extrapolate: 'clamp'
-    });
-
+  const renderService = (item) => {
     return (
-      <TouchableOpacity onPress={() => setSelectedService(item)}>
-        <Animated.View style={[styles.serviceCard, { transform: [{ scale }] }]}>
-          <Image source={item.image} style={styles.serviceImage} />
-          <View style={styles.serviceInfo}>
-            <Text style={styles.serviceName}>{item.name}</Text>
-            <Text style={styles.serviceCategory}>{item.category}</Text>
-            <Text style={styles.servicePrice}>{item.price}</Text>
-          </View>
-        </Animated.View>
+      <TouchableOpacity key={item.id} onPress={() => setSelectedService(item)} style={styles.serviceCard}>
+        <Image source={item.image} style={styles.serviceImage} />
+        <View style={styles.serviceInfo}>
+          <Text style={styles.serviceName}>{item.name}</Text>
+          <Text style={styles.serviceCategory}>{item.category}</Text>
+          <Text style={styles.servicePrice}>{item.price}</Text>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -68,20 +53,23 @@ const HomeScreen = ({ navigation }) => {
         <Text style={styles.timeText}>{currentTime}</Text>
       </View>
 
+      <View style={styles.topButtons}>
+        <TouchableOpacity style={styles.topButton}>
+          <Text style={styles.topButtonText}>Buy</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.topButton}>
+          <Text style={styles.topButtonText}>Rent</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.topButton}>
+          <Text style={styles.topButtonText}>Order</Text>
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.subtitle}>Discover Extraordinary Experiences</Text>
 
-      <Animated.FlatList
-        data={initialServices}
-        renderItem={renderService}
-        keyExtractor={(item) => item.id}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: true }
-        )}
-      />
+      <ScrollView contentContainerStyle={styles.gridContainer}>
+        {initialServices.map(renderService)}
+      </ScrollView>
 
       {selectedService && (
         <View style={styles.detailsContainer}>
@@ -96,17 +84,7 @@ const HomeScreen = ({ navigation }) => {
         </View>
       )}
 
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Buy</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Rent</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Order</Text>
-        </TouchableOpacity>
-      </View>
+     
     </SafeAreaView>
   );
 };
@@ -131,49 +109,69 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
   },
+  topButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+    backgroundColor: '#fff',
+  },
+  topButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    backgroundColor: '#1a2a6c',
+  },
+  topButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
   subtitle: {
     fontSize: 18,
     color: '#fff',
     textAlign: 'center',
-    marginBottom: 20,
+    marginVertical: 10,
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    padding: 10,
   },
   serviceCard: {
-    width: width - 40,
-    height: 300,
-    marginHorizontal: 20,
-    borderRadius: 20,
+    width: (width - 30) / 2,
+    height: 200,
+    marginBottom: 10,
+    borderRadius: 10,
     overflow: 'hidden',
     backgroundColor: '#fff',
   },
   serviceImage: {
     width: '100%',
-    height: '70%',
+    height: '60%',
     resizeMode: 'cover',
   },
   serviceInfo: {
-    padding: 15,
+    padding: 10,
   },
   serviceName: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
   },
   serviceCategory: {
-    fontSize: 16,
+    fontSize: 12,
     color: '#666',
-    marginVertical: -1,
   },
   servicePrice: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#1a2a6c',
   },
   detailsContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     padding: 20,
-    marginHorizontal: 20,
+    margin: 10,
     borderRadius: 10,
-    marginTop: 20,
   },
   detailsTitle: {
     fontSize: 22,
@@ -198,19 +196,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
     padding: 20,
-  },
-  footerButton: {
     backgroundColor: '#fff',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
   },
-  footerButtonText: {
+  footerText: {
     color: '#1a2a6c',
-    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 5,
   },
 });
 
