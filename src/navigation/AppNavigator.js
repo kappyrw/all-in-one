@@ -10,6 +10,7 @@ import UserDashboardScreen from "../screens/UserDashboardScreen";
 import ProductDetailScreen from "../screens/ProductDetailScreen";
 import HomeScreen from "../screens/HomeScreen";
 import ProductListingScreen from "../screens/ProductListingScreen";
+import OrderScreen from "../screens/OrderScreen";
 
 
 
@@ -26,6 +27,7 @@ const AppNavigator = () => {
 				<Stack.Screen name="AccountCreatedScreen" component={AccountCreatedScreen} />
 				<Stack.Screen name="UserDashboardScreen" component={UserDashboardScreen} />
 				<Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} />
+				<Stack.Screen name="OrderScreen" component={OrderScreen} />
 			
 				
 			</Stack.Navigator>
