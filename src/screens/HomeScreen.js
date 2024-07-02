@@ -60,7 +60,7 @@ const HomeScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.topButton}>
           <Text style={styles.topButtonText}>Rent</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.topButton}>
+        <TouchableOpacity style={styles.topButton} onPress={() => navigation.navigate("OrderScreen")}>
           <Text style={styles.topButtonText}>Order</Text>
         </TouchableOpacity>
       </View>
