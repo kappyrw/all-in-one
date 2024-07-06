@@ -407,6 +407,7 @@ function OrderScreen({ navigation }) {
               <Icon name={categoryIcons[category]} size={40} color="#1a2a6c" />
             </View>
             {renderForm()}
+            
             <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
               <Text style={styles.submitButtonText}>Submit Order</Text>
             </TouchableOpacity>
