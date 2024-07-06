@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "expo": {
     "name": "AI-One",
@@ -28,4 +29,36 @@
       "favicon": "./assets/favicon.png"
     }
   }
+=======
+{
+  "expo": {
+    "name": "AI-One",
+    "slug": "imc",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/imc.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/imc.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#005555"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.yourcompany.aione"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+>>>>>>> 4f1fca7 (adding full ferltring functionality to the order screen)
 }
