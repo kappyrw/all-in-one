@@ -1,3 +1,4 @@
+
 {
   "expo": {
     "name": "AI-One",
@@ -28,4 +29,3 @@
       "favicon": "./assets/favicon.png"
     }
   }
-}
