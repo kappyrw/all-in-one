@@ -1,6 +1,8 @@
+
+
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -15,8 +17,19 @@ function OrderScreen({ navigation }) {
   const [category, setCategory] = useState('');
   const [formData, setFormData] = useState({});
 
-  const handleCategoryChange = (value) => {
+  const [showCategories, setShowCategories] = useState(false);
+
+  const categories = [
+    { label: 'Cars', value: 'cars', icon: 'directions-car' },
+    { label: 'Auto Spare Part', value: 'auto_spare_part', icon: 'build' },
+    { label: 'Tech Gadget', value: 'tech_gadget', icon: 'devices' },
+    { label: 'Other', value: 'other', icon: 'category' },
+  ];
+
+  const handleCategorySelect = (value) => {
     setCategory(value);
+    setShowCategories(false);
+
     setFormData({});
   };
 
@@ -44,7 +57,9 @@ function OrderScreen({ navigation }) {
             <FormInput icon="confirmation-number" placeholder="Chassis Number" onChangeText={(value) => handleInputChange('chassis', value)} />
             <FormInput icon="build" placeholder="Spare Part Name" onChangeText={(value) => handleInputChange('partName', value)} />
             <FormInput icon="code" placeholder="Spare Part Code Number" onChangeText={(value) => handleInputChange('partCode', value)} />
-            <TouchableOpacity style={styles.uploadButton} onPress={() => {}}>
+
+            <TouchableOpacity style={styles.uploadButton} onPress={() => { }}>
+
               <Icon name="cloud-upload" size={24} color="#fff" />
               <Text style={styles.uploadButtonText}>Upload Picture</Text>
             </TouchableOpacity>
@@ -85,23 +100,36 @@ function OrderScreen({ navigation }) {
           <Text style={styles.headerText}>Create Your Order</Text>
           <Text style={styles.subHeaderText}>Select a category and fill in the details</Text>
         </View>
-        
+
+
+
         <View style={styles.categoryContainer}>
           <Text style={styles.label}>Select Order Category:</Text>
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={category}
-              onValueChange={handleCategoryChange}
-              style={styles.picker}
-              mode='dropdown'
-            >
-              <Picker.Item label="Choose a category" value="" color="#666" />
-              <Picker.Item label="Cars" value="cars" color="#1a2a6c" />
-              <Picker.Item label="Auto Spare Part" value="auto_spare_part" color="#1a2a6c" />
-              <Picker.Item label="Tech" value="tech_gadget" color="#1a2a6c" />
-              <Picker.Item label="Other" value="other" color="#1a2a6c" />
-            </Picker>
-          </View>
+          <TouchableOpacity
+            style={styles.dropdownButton}
+            onPress={() => setShowCategories(!showCategories)}
+          >
+            <Text style={styles.dropdownButtonText}>
+              {category ? categories.find(c => c.value === category).label : 'Choose a category'}
+            </Text>
+            <Icon name={showCategories ? 'arrow-drop-up' : 'arrow-drop-down'} size={24} color="#1a2a6c" />
+          </TouchableOpacity>
+
+          {showCategories && (
+            <View style={styles.dropdownList}>
+              {categories.map((item) => (
+                <TouchableOpacity
+                  key={item.value}
+                  style={styles.dropdownItem}
+                  onPress={() => handleCategorySelect(item.value)}
+                >
+                  <Icon name={item.icon} size={24} color="#1a2a6c" style={styles.dropdownItemIcon} />
+                  <Text style={styles.dropdownItemText}>{item.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+
         </View>
 
         {category && (
@@ -173,15 +201,41 @@ const styles = StyleSheet.create({
     color: '#1a2a6c',
     marginBottom: 10,
   },
-  pickerContainer: {
+
+  dropdownButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
     borderColor: '#1a2a6c',
-    borderWidth: 2,
     borderRadius: 5,
-    overflow: 'hidden',
-  },
-  picker: {
+    padding: 10,
     backgroundColor: '#fff',
-    
+  },
+  dropdownButtonText: {
+    fontSize: 16,
+    color: '#1a2a6c',
+  },
+  dropdownList: {
+    marginTop: 5,
+    borderWidth: 1,
+    borderColor: '#1a2a6c',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+  },
+  dropdownItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  dropdownItemIcon: {
+    marginRight: 10,
+  },
+  dropdownItemText: {
+    fontSize: 16,
+
     color: '#1a2a6c',
   },
   formContainer: {
