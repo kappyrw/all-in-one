@@ -63,6 +63,9 @@ const HomeScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.topButton} onPress={() => navigation.navigate("OrderScreen")}>
           <Text style={styles.topButtonText}>Order</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.topButton} onPress={() => navigation.navigate("ServiceScreen")}>
+          <Text style={styles.topButtonText}>Service</Text>
+        </TouchableOpacity>
       </View>
 
       <Text style={styles.subtitle}>Discover Extraordinary Experiences</Text>
