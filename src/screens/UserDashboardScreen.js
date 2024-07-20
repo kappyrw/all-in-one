@@ -1,8 +1,14 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, Dimensions } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { LineChart } from "react-native-chart-kit";
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, Dimensions, Image, TextInput, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LineChart } from 'react-native-chart-kit';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 
+const Tab = createBottomTabNavigator();
+
+// Mock data for services
 const services = [
   { id: '1', name: 'Luxury Spa', status: 'pending', orderDate: '2024-06-26', price: 150 },
   { id: '2', name: 'Gourmet Dinner', status: 'shipped', orderDate: '2024-06-25', price: 200 },
@@ -12,7 +18,7 @@ const services = [
   { id: '6', name: 'Wine Tasting', status: 'processing', orderDate: '2024-06-29', price: 120 },
 ];
 
-const UserDashboardScreen = ({ navigation, route }) => {
+const HomeScreen = ({ route }) => {
   const { name } = route.params;
   const [selectedStatus, setSelectedStatus] = useState('all');
 
@@ -23,12 +29,7 @@ const UserDashboardScreen = ({ navigation, route }) => {
   const renderServiceItem = ({ item }) => (
     <TouchableOpacity
       style={[styles.serviceCard, getStatusColor(item.status)]}
-      onPress={() => navigation.navigate("ProductDetailScreen", {
-        productName: item.name,
-        orderDate: item.orderDate,
-        status: item.status,
-        price: item.price
-      })}
+      onPress={() => {/* Navigate to product detail screen */}}
     >
       <Text style={styles.serviceName}>{item.name}</Text>
       <Text style={styles.serviceInfo}>{`$${item.price}`}</Text>
@@ -61,7 +62,7 @@ const UserDashboardScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <ScrollView style={styles.content}>
         <Text style={styles.title}>Welcome, {name}!</Text>
         
         <View style={styles.statsContainer}>
@@ -96,30 +97,15 @@ const UserDashboardScreen = ({ navigation, route }) => {
         />
 
         <View style={styles.filterContainer}>
-          <TouchableOpacity 
-            style={[styles.filterButton, selectedStatus === 'all' && styles.activeFilter]}
-            onPress={() => setSelectedStatus('all')}
-          >
-            <Text style={styles.filterText}>All</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.filterButton, selectedStatus === 'pending' && styles.activeFilter]}
-            onPress={() => setSelectedStatus('pending')}
-          >
-            <Text style={styles.filterText}>Pending</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.filterButton, selectedStatus === 'shipped' && styles.activeFilter]}
-            onPress={() => setSelectedStatus('shipped')}
-          >
-            <Text style={styles.filterText}>Shipped</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.filterButton, selectedStatus === 'processing' && styles.activeFilter]}
-            onPress={() => setSelectedStatus('processing')}
-          >
-            <Text style={styles.filterText}>Processing</Text>
-          </TouchableOpacity>
+          {['all', 'pending', 'shipped', 'processing'].map((status) => (
+            <TouchableOpacity 
+              key={status}
+              style={[styles.filterButton, selectedStatus === status && styles.activeFilter]}
+              onPress={() => setSelectedStatus(status)}
+            >
+              <Text style={styles.filterText}>{status.charAt(0).toUpperCase() + status.slice(1)}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
         <FlatList
@@ -129,8 +115,133 @@ const UserDashboardScreen = ({ navigation, route }) => {
           contentContainerStyle={styles.servicesList}
           numColumns={2}
         />
-      </View>
+      </ScrollView>
     </SafeAreaView>
+  );
+};
+
+const CartScreen = () => (
+  <View style={styles.screenContainer}>
+    <Text style={styles.screenTitle}>Cart</Text>
+    {/* Implement cart functionality here */}
+  </View>
+);
+
+const ProfileScreen = ({ route }) => {
+  const { name } = route.params;
+  const [profileImage, setProfileImage] = useState(null);
+  const [email, setEmail] = useState('user@example.com');
+  const [phone, setPhone] = useState('(123) 456-7890');
+  const [bio, setBio] = useState('I love traveling and experiencing new adventures!');
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setProfileImage(result.uri);
+    }
+  };
+
+  const handleSaveChanges = () => {
+    // Implement save functionality here
+    console.log('Saving changes...');
+  };
+
+  return (
+    <ScrollView style={styles.profileContainer}>
+      <View style={styles.profileHeader}>
+        <TouchableOpacity onPress={pickImage}>
+          {profileImage ? (
+            <Image source={{ uri: profileImage }} style={styles.profileImage} />
+          ) : (
+            <View style={styles.profileImagePlaceholder}>
+              <Text style={styles.profileImagePlaceholderText}>{name[0].toUpperCase()}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+        <Text style={styles.profileName}>{name}</Text>
+      </View>
+
+      <View style={styles.profileInfo}>
+        <View style={styles.infoItem}>
+          <Text style={styles.infoLabel}>Email</Text>
+          <TextInput
+            style={styles.infoInput}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+        </View>
+        <View style={styles.infoItem}>
+          <Text style={styles.infoLabel}>Phone</Text>
+          <TextInput
+            style={styles.infoInput}
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
+          />
+        </View>
+        <View style={styles.infoItem}>
+          <Text style={styles.infoLabel}>Bio</Text>
+          <TextInput
+            style={[styles.infoInput, styles.bioInput]}
+            value={bio}
+            onChangeText={setBio}
+            multiline
+          />
+        </View>
+      </View>
+
+      <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+        <Text style={styles.saveButtonText}>Save Changes</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+};
+
+const UserDashboardScreen = ({ route }) => {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Cart') {
+            iconName = focused ? 'cart' : 'cart-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#F9A826',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          backgroundColor: '#1a2a6c',
+          borderTopColor: '#1a2a6c',
+        },
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen 
+        name="Home" 
+        component={HomeScreen} 
+        initialParams={route.params}
+      />
+      <Tab.Screen name="Cart" component={CartScreen} />
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen} 
+        initialParams={route.params}
+      />
+    </Tab.Navigator>
   );
 };
 
@@ -225,6 +336,83 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "#fff",
     marginTop: 5,
+  },
+  screenContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#1a2a6c',
+  },
+  screenTitle: {
+    fontSize: 24,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  profileContainer: {
+    flex: 1,
+    backgroundColor: "#1a2a6c",
+    padding: 20,
+  },
+  profileHeader: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  profileImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginBottom: 15,
+  },
+  profileImagePlaceholder: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: '#F9A826',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  profileImagePlaceholderText: {
+    fontSize: 60,
+    color: '#fff',
+  },
+  profileName: {
+    fontSize: 24,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  profileInfo: {
+    marginBottom: 30,
+  },
+  infoItem: {
+    marginBottom: 20,
+  },
+  infoLabel: {
+    fontSize: 16,
+    color: '#F9A826',
+    marginBottom: 5,
+  },
+  infoInput: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 10,
+    padding: 15,
+    color: '#fff',
+    fontSize: 16,
+  },
+  bioInput: {
+    height: 100,
+    textAlignVertical: 'top',
+  },
+  saveButton: {
+    backgroundColor: '#F9A826',
+    borderRadius: 10,
+    padding: 15,
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
