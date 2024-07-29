@@ -12,7 +12,11 @@ import HomeScreen from "../screens/HomeScreen";
 import ProductListingScreen from "../screens/ProductListingScreen";
 import OrderScreen from "../screens/OrderScreen";
 import ServiceScreen from "../screens/ServiceScreen";
+
 import PaymentScreen from "../screens/PaymentScreen";
+
+import CartScreen from "../screens/CartScreen";
+
 
 
 
@@ -31,7 +35,11 @@ const AppNavigator = () => {
 				<Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} />
 				<Stack.Screen name="OrderScreen" component={OrderScreen} />
 				<Stack.Screen name="ServiceScreen" component={ServiceScreen} />
+
 				<Stack.Screen name="PaymentScreen" component={PaymentScreen} />
+
+				<Stack.Screen name="CartScreen" component={CartScreen} />
+
 			
 				
 			</Stack.Navigator>
