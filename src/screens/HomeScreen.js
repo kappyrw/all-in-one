@@ -24,6 +24,7 @@ const initialServices = [
 const HomeScreen = ({ navigation }) => {
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
   const [selectedService, setSelectedService] = useState(null);
+  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     const timerID = setInterval(() => {
@@ -32,6 +33,15 @@ const HomeScreen = ({ navigation }) => {
 
     return () => clearInterval(timerID);
   }, []);
+
+  const addToCart = (service) => {
+    setCart([...cart, service]);
+    alert(`${service.name} added to cart!`);
+  };
+
+  const navigateToCart = () => {
+    navigation.navigate("CartScreen", { cart: cart });
+  };
 
   const renderService = (item) => {
     return (
@@ -78,14 +88,29 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.detailsContainer}>
           <Text style={styles.detailsTitle}>{selectedService.name}</Text>
           <Text style={styles.detailsDescription}>{selectedService.description}</Text>
-          <TouchableOpacity 
-            style={styles.orderButton}
-            onPress={() => navigation.navigate("WelcomeScreen", { productName: selectedService.name })}
-          >
-            <Text style={styles.orderButtonText}>Order</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => navigation.navigate("WelcomeScreen", { productName: selectedService.name })}
+            >
+              <Text style={styles.actionButtonText}>Order</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => addToCart(selectedService)}
+            >
+              <Text style={styles.actionButtonText}>Add to Cart</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
+
+      <TouchableOpacity 
+        style={styles.cartIndicator}
+        onPress={navigateToCart}
+      >
+        <Text style={styles.cartIndicatorText}>Cart: {cart.length}</Text>
+      </TouchableOpacity>
 
     </SafeAreaView>
   );
@@ -186,25 +211,34 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 15,
   },
-  orderButton: {
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  actionButton: {
     backgroundColor: '#1a2a6c',
     padding: 10,
     borderRadius: 5,
+    flex: 1,
+    marginHorizontal: 5,
     alignItems: 'center',
   },
-  orderButtonText: {
+  actionButtonText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },
-  footer: {
-    padding: 20,
+  cartIndicator: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
     backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 20,
   },
-  footerText: {
+  cartIndicatorText: {
     color: '#1a2a6c',
-    fontSize: 16,
-    marginBottom: 5,
+    fontWeight: 'bold',
   },
 });
 
