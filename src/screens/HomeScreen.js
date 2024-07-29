@@ -44,13 +44,20 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const renderService = (item) => {
+    // console.log("my image", item.image);
     return (
+
       <TouchableOpacity key={item.id} onPress={() => setSelectedService(item)} style={styles.serviceCard}>
         <Image source={item.image} style={styles.serviceImage} />
+        
         <View style={styles.serviceInfo}>
           <Text style={styles.serviceName}>{item.name}</Text>
           <Text style={styles.serviceCategory}>{item.category}</Text>
+          <View style={{display:"flex",flexDirection:"row", justifyContent:"space-between"}}>
+
           <Text style={styles.servicePrice}>{item.price}</Text>
+            <Text style={styles.servicePrice} onPress={() => navigation.navigate("PaymentScreen", { amount: item.price, productName: item.name, image: item.image })}>Buy</Text>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -75,6 +82,9 @@ const HomeScreen = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.topButton} onPress={() => navigation.navigate("ServiceScreen")}>
           <Text style={styles.topButtonText}>Service</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.topButton} >
+          <Text style={styles.topButtonText}>payment</Text>
         </TouchableOpacity>
       </View>
 
