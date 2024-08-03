@@ -16,6 +16,7 @@ import ServiceScreen from "../screens/ServiceScreen";
 import PaymentScreen from "../screens/PaymentScreen";
 
 import CartScreen from "../screens/CartScreen";
+import DashNavigation from "./DashNavigation";
 
 
 
@@ -31,7 +32,7 @@ const AppNavigator = () => {
 				<Stack.Screen name="SignUpScreen" component={SignUpScreen} />
 				<Stack.Screen name="SignInScreen" component={SignInScreen} />
 				<Stack.Screen name="AccountCreatedScreen" component={AccountCreatedScreen} />
-				<Stack.Screen name="UserDashboardScreen" component={UserDashboardScreen} />
+				<Stack.Screen name="UserDashboardScreen" component={DashNavigation} />
 				<Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} />
 				<Stack.Screen name="OrderScreen" component={OrderScreen} />
 				<Stack.Screen name="ServiceScreen" component={ServiceScreen} />
