@@ -26,7 +26,7 @@ const services = [
 ];
 
 const HomeScreen = ({ route, navigation }) => {
-  const { name } = route.params;
+  const  name  ="Qeen";
 
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedService, setSelectedService] = useState(null);
@@ -54,7 +54,7 @@ const HomeScreen = ({ route, navigation }) => {
         <View style={styles.servicePriceContainer}>
           <Text style={styles.servicePrice}>${item.price}</Text>
           <TouchableOpacity onPress={() => addToCart(item)}>
-            <Text style={styles.addToCartButton}>Add to Cart</Text>
+            <Text style={styles.addToCartButton}>Add to Cart </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -262,7 +262,6 @@ const ProfileScreen = ({ route }) => {
 
 
 
-const Tab = createBottomTabNavigator();
 
 const DashboardTabs = ({ route }) => {
   return (
@@ -292,7 +291,8 @@ const DashboardTabs = ({ route }) => {
     >
 
       <Tab.Screen name="Home" component={HomeScreen} initialParams={route.params} />
-      <Tab.Screen name="Cart" component={CartScreen} />
+      {/* <Tab.Screen name="Cart" component={CartScreen} /> */}
+      <Tab.Screen name="Cart" component={CartScreen} initialParams={{ cart: [] }} />
       <Tab.Screen name="Profile" component={ProfileScreen} initialParams={route.params} />
       <Tab.Screen name="Notification" component={NotificationScreen} />
     </Tab.Navigator>
