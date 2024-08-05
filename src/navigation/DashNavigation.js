@@ -28,7 +28,7 @@ function CustomDrawerContent(props) {
                 onPress={() => props.navigation.navigate('Home')}
             />
             <DrawerItem
-                label="Chart"
+                label="Cart"
                 icon={({ color, size }) => <Ionicons name="cart" color={color} size={size} />}
                 onPress={() => props.navigation.navigate('Cart')}
             />
@@ -94,22 +94,7 @@ export default function DashNavigation() {
                         </View>
                     )}
                 </Drawer.Screen>
-                <Drawer.Screen name="Notification">
-                    {props => (
-                        <View style={{ flex: 1 }}>
-                            <CustomHeader {...props} />
-                            <NotificationScreen {...props} />
-                        </View>
-                    )}
-                </Drawer.Screen>
-            <Drawer.Screen name="Cart">
-                    {props => (
-                        <View style={{ flex: 1 }}>
-                            <CustomHeader {...props} />
-                            {/* <NotificationScreen {...props} /> */}
-                        </View>
-                    )}
-                </Drawer.Screen>
+                
             </Drawer.Navigator>
        
     );

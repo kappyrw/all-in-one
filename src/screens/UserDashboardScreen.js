@@ -39,6 +39,8 @@ const HomeScreen = ({ route, navigation }) => {
   const addToCart = (service) => {
     setCart([...cart, service]);
     alert(`${service.name} added to cart!`);
+   
+      
   };
 
   const renderServiceItem = ({ item }) => (
@@ -69,6 +71,7 @@ const HomeScreen = ({ route, navigation }) => {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.content}>
         <Text style={styles.title}>Welcome, {name}!</Text>
+        
 
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
@@ -140,15 +143,16 @@ const HomeScreen = ({ route, navigation }) => {
         style={styles.cartIndicator}
         onPress={() => navigation.navigate("Cart", { cart: cart })}
       >
-        <Text style={styles.cartIndicatorText}>Cart: {cart.length}</Text>
+        <Text style={styles.cartIndicatorText}>Cartllll: {cart.length}</Text>
       </TouchableOpacity>
+      {/* <DashboardTabs {...DashboardTabs: cart} ></DashboardTabs> */}
     </SafeAreaView>
   );
 };
 
 const CartScreen = ({ route }) => {
   const { cart } = route.params;
-
+console.log("catiti",cart);
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + item.price, 0);
   };
@@ -264,6 +268,8 @@ const ProfileScreen = ({ route }) => {
 
 
 const DashboardTabs = ({ route }) => {
+  // const { cart } = route.params;
+  // console.log("my cart", cart);
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -292,7 +298,7 @@ const DashboardTabs = ({ route }) => {
 
       <Tab.Screen name="Home" component={HomeScreen} initialParams={route.params} />
       {/* <Tab.Screen name="Cart" component={CartScreen} /> */}
-      <Tab.Screen name="Cart" component={CartScreen} initialParams={{ cart: [] }} />
+      <Tab.Screen name="Cart" component={CartScreen} initialParams={{ cart: []  }} />
       <Tab.Screen name="Profile" component={ProfileScreen} initialParams={route.params} />
       <Tab.Screen name="Notification" component={NotificationScreen} />
     </Tab.Navigator>
