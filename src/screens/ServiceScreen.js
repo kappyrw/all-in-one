@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ImageBackground } from 'react-native';
+import { View, Text, TextInput, Image,TouchableOpacity, StyleSheet, ScrollView, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import logistics from "../../assets/images/serviceImage/logistics.jpeg";
@@ -8,6 +8,9 @@ import Autoshopa3 from "../../assets/images/serviceImage/Autoshop.jpeg";
 import realEstate from "../../assets/images/serviceImage/realEstate.jpeg";
 import la5 from "../../assets/images/la5.jpeg";
 import la6 from "../../assets/images/la6.jpeg";
+
+import imcLogZoomed from "../../assets/imcLogZoomed.png";
+import { Ionicons } from "@expo/vector-icons";
 const services = [
     {
         title: 'Logistic & Shipping',
@@ -27,15 +30,21 @@ const services = [
     },
 ];
 
-const ServiceScreen = () => {
+
+
+const ServiceScreen = (navigation, {route}) => {
     const [selectedService, setSelectedService] = useState(null);
+    const [cart, setCart] = useState([]);
 
     const handleServiceSelect = (service) => {
         setSelectedService(selectedService === service ? null : service);
     };
-
+    const navigateToCart = () => {
+        navigation.navigate("CartScreen", { cart: cart });
+    };
     return (
         <SafeAreaView style={styles.container}>
+            
             <ScrollView>
                 <View style={styles.header}>
                     <Text style={styles.headerText}>Choose Your Service</Text>
@@ -106,6 +115,46 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f0f2f5',
+    },
+    header2: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 20,
+        color: "#1a2a6c",
+        backgroundColor: "#fff",
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+    },
+    title: {
+        fontSize: 28,
+        color: '#1a2a6c',
+        fontWeight: 'bold',
+    },
+    cartIcon:
+    {
+        backgroundColor: "#fcc",
+        size: 20,
+    },
+
+    cartIndicator: {
+        // position: 'absolute',
+        display: "flex",
+        flexDirection: "row",
+        // top: 40,
+        // right: 20,
+        backgroundColor: '#fff',
+        padding: 10,
+        borderRadius: 20,
+    },
+    cartIndicatorText: {
+        color: '#1a2a6c',
+        fontWeight: 'bold',
+    },
+    logoImage: {
+        width: 60,
+        height: 40,
+        borderRadius: 20,
     },
     header: {
         backgroundColor: '#1a2a6c',

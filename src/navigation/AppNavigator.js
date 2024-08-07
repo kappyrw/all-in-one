@@ -12,11 +12,12 @@ import HomeScreen from "../screens/HomeScreen";
 import ProductListingScreen from "../screens/ProductListingScreen";
 import OrderScreen from "../screens/OrderScreen";
 import ServiceScreen from "../screens/ServiceScreen";
-
 import PaymentScreen from "../screens/PaymentScreen";
-
 import CartScreen from "../screens/CartScreen";
+import RentScreen from "../screens/RentScreen"
+import BuyScreen from "../screens/BuyScreen"
 import DashNavigation from "./DashNavigation";
+import { GlobalProvider } from "../context/GlobalContext";
 
 
 
@@ -24,6 +25,7 @@ import DashNavigation from "./DashNavigation";
 const Stack = createNativeStackNavigator();
 const AppNavigator = () => {
 	return (
+		<GlobalProvider>
 		<NavigationContainer>
 			<Stack.Navigator screenOptions={{ headerShown: false }}>
 			    <Stack.Screen name="HomeScreen" component={HomeScreen} />
@@ -40,11 +42,14 @@ const AppNavigator = () => {
 				<Stack.Screen name="PaymentScreen" component={PaymentScreen} />
 
 				<Stack.Screen name="CartScreen" component={CartScreen} />
+				<Stack.Screen name="RentScreen" component={RentScreen} />
+				<Stack.Screen name="BuyScreen" component={BuyScreen} />
 
 			
 				
 			</Stack.Navigator>
 		</NavigationContainer>
+		</GlobalProvider>
 	);
 };
 
