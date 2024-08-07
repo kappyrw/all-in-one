@@ -1,9 +1,12 @@
 
 
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
+import imcLogZoomed from "../../assets/imcLogZoomed.png";
+import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const categoryIcons = {
@@ -16,6 +19,7 @@ const categoryIcons = {
 function OrderScreen({ navigation }) {
   const [category, setCategory] = useState('');
   const [formData, setFormData] = useState({});
+  const [cart, setCart] = useState([]);
 
   const [showCategories, setShowCategories] = useState(false);
 
@@ -92,11 +96,14 @@ function OrderScreen({ navigation }) {
     // For now, we'll just navigate back to the home screen
     navigation.navigate('HomeScreen');
   };
-
+  const navigateToCart = () => {
+    navigation.navigate("CartScreen", { cart: cart });
+  };
   return (
     <SafeAreaView style={styles.container}>
+      
       <ScrollView style={styles.container}>
-        <View style={styles.header}>
+        <View style={styles.header2}>
           <Text style={styles.headerText}>Create Your Order</Text>
           <Text style={styles.subHeaderText}>Select a category and fill in the details</Text>
         </View>
@@ -114,6 +121,7 @@ function OrderScreen({ navigation }) {
             </Text>
             <Icon name={showCategories ? 'arrow-drop-up' : 'arrow-drop-down'} size={24} color="#1a2a6c" />
           </TouchableOpacity>
+          
 
           {showCategories && (
             <View style={styles.dropdownList}>
@@ -142,6 +150,7 @@ function OrderScreen({ navigation }) {
               <Text style={styles.submitButtonText}>Submit Order</Text>
             </TouchableOpacity>
           </View>
+
         )}
       </ScrollView>
     </SafeAreaView>
@@ -167,6 +176,46 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f2f5',
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    color: "#1a2a6c",
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  title: {
+    fontSize: 28,
+    color: '#1a2a6c',
+    fontWeight: 'bold',
+  },
+  cartIcon:
+  {
+    backgroundColor: "#fcc",
+    size:20,
+  },
+
+  cartIndicator: {
+    // position: 'absolute',
+    display: "flex",
+    flexDirection: "row",
+    // top: 40,
+    // right: 20,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 20,
+  },
+  cartIndicatorText: {
+    color: '#1a2a6c',
+    fontWeight: 'bold',
+  },
+  logoImage: {
+    width: 60,
+    height: 40,
+    borderRadius: 20,
+  },
+  header2: {
     backgroundColor: '#1a2a6c',
     padding: 20,
     alignItems: 'center',

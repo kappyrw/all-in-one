@@ -143,9 +143,9 @@ const HomeScreen = ({ route, navigation }) => {
         style={styles.cartIndicator}
         onPress={() => navigation.navigate("Cart", { cart: cart })}
       >
-        <Text style={styles.cartIndicatorText}>Cartllll: {cart.length}</Text>
+        <Text style={styles.cartIndicatorText}>Cart: {cart.length}</Text>
       </TouchableOpacity>
-      {/* <DashboardTabs {...DashboardTabs: cart} ></DashboardTabs> */}
+      
     </SafeAreaView>
   );
 };

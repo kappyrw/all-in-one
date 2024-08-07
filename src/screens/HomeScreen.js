@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -9,22 +9,60 @@ import la3 from "../../assets/images/la3.jpeg";
 import la4 from "../../assets/images/la4.jpeg";
 import la5 from "../../assets/images/la5.jpeg";
 import la6 from "../../assets/images/la6.jpeg";
+import imcLogZoomed from "../../assets/imcLogZoomed.png";
+import { Ionicons } from "@expo/vector-icons";
+import RentScreen from "../screens/RentScreen";
+import OrderScreen from "../screens/OrderScreen";
+import ServiceScreen from "../screens/ServiceScreen";
+import { GlobalContext } from '../context/GlobalContext';
+
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import BuyScreen from "./BuyScreen";
 
 const { width } = Dimensions.get('window');
 
-const initialServices = [
-  { id: '1', name: 'Luxury Spa', image: la1, category: 'Wellness', price: '$150', description: 'Indulge in our luxurious spa treatments for ultimate relaxation.' },
-  { id: '2', name: 'Gourmet Dinner', image: la2, category: 'Dining', price: '$200', description: 'Experience fine dining with our chef\'s special gourmet menu.' },
-  { id: '3', name: 'Adventure Trek', image: la3, category: 'Adventure', price: '$100', description: 'Embark on an exciting trek through scenic landscapes.' },
-  { id: '4', name: 'Art Workshop', image: la4, category: 'Culture', price: '$80', description: 'Unleash your creativity in our interactive art workshops.' },
-  { id: '5', name: 'Yacht Cruise', image: la5, category: 'Leisure', price: '$300', description: 'Enjoy a luxurious yacht cruise along the beautiful coastline.' },
-  { id: '6', name: 'Wine Tasting', image: la6, category: 'Experience', price: '$120', description: 'Savor exquisite wines in our guided tasting sessions.' },
-];
 
-const HomeScreen = ({ navigation }) => {
+const Tab = createBottomTabNavigator();
+const DashboardTabs = ({ route }) => {
+
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          if (route.name === 'Buy') {
+            iconName = focused ? 'ios-cart' : 'ios-cart-outline';
+          } else if (route.name === 'Rent') {
+            iconName = focused ? 'ios-key' : 'ios-key-outline';
+          } else if (route.name === 'Order') {
+            iconName = focused ? 'ios-list' : 'ios-list-outline';
+          } else if (route.name === 'Service') {
+            iconName = focused ? 'ios-construct' : 'ios-construct-outline';
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#F9A826',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          backgroundColor: '#1a2a6c',
+          borderTopColor: '#1a2a6c',
+        },
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen name="Buy" component={BuyScreen} initialParams={route.params} />
+      <Tab.Screen name="Rent" component={RentScreen} initialParams={{ cart: [] }} />
+      <Tab.Screen name="Order" component={OrderScreen} initialParams={route.params} />
+      <Tab.Screen name="Service" component={ServiceScreen} />
+    </Tab.Navigator>
+  );
+};
+
+
+const HomeScreen = ({ navigation, route }) => {
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
-  const [selectedService, setSelectedService] = useState(null);
-  const [cart, setCart] = useState([]);
+  const {  cart } = useContext(GlobalContext); // Access addToCart from context
+  
 
   useEffect(() => {
     const timerID = setInterval(() => {
@@ -34,108 +72,66 @@ const HomeScreen = ({ navigation }) => {
     return () => clearInterval(timerID);
   }, []);
 
-  const addToCart = (service) => {
-    setCart([...cart, service]);
-    alert(`${service.name} added to cart!`);
-  };
+  
 
   const navigateToCart = () => {
     navigation.navigate("CartScreen", { cart: cart });
   };
-
-  const renderService = (item) => {
-    return (
-      <TouchableOpacity key={item.id} onPress={() => setSelectedService(item)} style={styles.serviceCard}>
-        <Image source={item.image} style={styles.serviceImage} />
-
-        <View style={styles.serviceInfo}>
-          <Text style={styles.serviceName}>{item.name}</Text>
-          <Text style={styles.serviceCategory}>{item.category}</Text>
-          <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-            <Text style={styles.servicePrice}>{item.price}</Text>
-            <Text style={styles.servicePrice} onPress={() => navigation.navigate("PaymentScreen", { amount: item.price, productName: item.name, image: item.image })}>Buy</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>MultiService</Text>
-        <Text style={styles.timeText}>{currentTime}</Text>
-      </View>
-
-      <View style={styles.topButtons}>
-        <TouchableOpacity style={styles.topButton}>
-          <Text style={styles.topButtonText}>Buy</Text>
+        <Image source={imcLogZoomed} style={styles.logoImage} />
+        <Text style={styles.title}>IMC Ltd</Text>        
+        <TouchableOpacity
+          style={styles.cartIcon}
+          onPress={navigateToCart}
+        >
+          <Ionicons name="cart" size={32} color="#1a2a6c" style={styles.icon} />
+          <Text style={styles.cartIndicatorText}> {cart.length}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.topButton}>
-          <Text style={styles.topButtonText}>Rent</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.topButton} onPress={() => navigation.navigate("OrderScreen")}>
-          <Text style={styles.topButtonText}>Order</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.topButton} onPress={() => navigation.navigate("ServiceScreen")}>
-          <Text style={styles.topButtonText}>Service</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.topButton} onPress={() => navigation.navigate("UserDashboardScreen")}>
-          <Text style={styles.topButtonText}>dash</Text>
-        </TouchableOpacity>
-      </View>
-
+      </View>     
       <Text style={styles.subtitle}>Discover Extraordinary Experiences</Text>
-
-      <ScrollView contentContainerStyle={styles.gridContainer}>
-        {initialServices.map(renderService)}
-      </ScrollView>
-
-      {selectedService && (
-        <View style={styles.detailsContainer}>
-          <Text style={styles.detailsTitle}>{selectedService.name}</Text>
-          <Text style={styles.detailsDescription}>{selectedService.description}</Text>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={() => navigation.navigate("WelcomeScreen", { productName: selectedService.name })}
-            >
-              <Text style={styles.actionButtonText}>Order</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={() => addToCart(selectedService)}
-            >
-              <Text style={styles.actionButtonText}>Add to Cart</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-
-      <TouchableOpacity
-        style={styles.cartIndicator}
-        onPress={navigateToCart}
-      >
-        <Text style={styles.cartIndicatorText}>Cart: {cart.length}</Text>
-      </TouchableOpacity>
+      <DashboardTabs  route={route} />
+      
     </SafeAreaView>
   );
-};  
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a2a6c',
+    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
+    color:"#1a2a6c",
+    backgroundColor:"#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
   title: {
     fontSize: 28,
-    color: '#fff',
+    color: '#1a2a6c',
     fontWeight: 'bold',
+  },
+  cartIcon:
+  {
+    backgroundColor:"#fff",
+    display:"flex",
+    flexDirection:"row",
+    fontWeight:"bold",
+    fontSize:20
+  },
+ 
+  logoImage: {
+    width: 60,
+    height:40,
+    borderRadius: 20,
   },
   timeText: {
     fontSize: 16,
@@ -159,7 +155,8 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 18,
-    color: '#fff',
+    fontWeight:"bold",
+    color: '#1a2a6c',
     textAlign: 'center',
     marginVertical: 10,
   },
@@ -176,6 +173,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     backgroundColor: '#fff',
+    shadowColor:"#ccc",
+    border:2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+    elevation: 5, // for Android shadow
+    // margin: 5,
+    // padding: 10,
+    
   },
   serviceImage: {
     width: '100%',
@@ -204,6 +210,11 @@ const styles = StyleSheet.create({
     padding: 20,
     margin: 10,
     borderRadius: 10,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+    elevation: 5,
+
   },
   detailsTitle: {
     fontSize: 22,
@@ -235,16 +246,19 @@ const styles = StyleSheet.create({
   },
   cartIndicator: {
     position: 'absolute',
-    top: 40,
-    right: 20,
-    backgroundColor: '#fff',
+    display:"flex",
+    flexDirection:"row",
+    top: 70,
+    right: 120,
+    // backgroundColor: '#fff',
     padding: 10,
     borderRadius: 20,
   },
   cartIndicatorText: {
-    color: '#1a2a6c',
+    color: 'red',
     fontWeight: 'bold',
   },
 });
 
 export default HomeScreen;
+
